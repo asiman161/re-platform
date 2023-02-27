@@ -1,0 +1,11 @@
+FROM node:16.13.2-alpine
+
+WORKDIR /src
+COPY . ./
+RUN ls -lh
+RUN npm install --location=global @angular/cli
+RUN npm install
+EXPOSE 4200
+CMD ["npm", "run", "start:docker"]
+
+

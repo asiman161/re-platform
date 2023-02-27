@@ -1,0 +1,39 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: re-platform-front-dev
+  labels:
+    app: re-platform-front-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: re-platform-front
+  template:
+    metadata:
+      labels:
+        project: re-platform-front
+    spec:
+      containers:
+        - name: angular-server
+          image: re-platform-front-dev:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 4200
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: re-platform-front-dev
+  labels:
+    env: prod
+    owner: me
+spec:
+  selector:
+    project: re-platform-front
+  ports:
+    - name: angular-server
+      protocol: TCP
+      port: 4200 # port on load balancer
+      targetPort: 4200 # port on pod
+  type: LoadBalancer
