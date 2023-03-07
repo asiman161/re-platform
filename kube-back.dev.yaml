@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: re-platform-back-dev
+  labels:
+    app: re-platform-back-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: re-platform-back-dev
+  template:
+    metadata:
+      labels:
+        project: re-platform-back-dev
+    spec:
+      containers:
+        - name: re-platform-back
+          image: re-platform-back-dev:latest
+          imagePullPolicy: Never
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DATABASE_URL
+              value: postgres://postgresadmin:admin123@re-platform-pg-dev.default:5432/postgresdb
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: re-platform-back-dev
+  labels:
+    env: prod
+    owner: me
+spec:
+  selector:
+    project: re-platform-back-dev
+  ports:
+    - name: re-platform-back
+      protocol: TCP
+      port: 8080 # port on load balancer
+      targetPort: 8080 # port on pod
+  type: LoadBalancer
