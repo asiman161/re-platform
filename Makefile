@@ -9,3 +9,6 @@ tunnel:
 
 .PHONY: up-dev
 up-dev: start-dev tunnel
+
+.PHONY: down-dev
+down-dev: shutdown-dev

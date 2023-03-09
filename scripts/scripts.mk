@@ -18,6 +18,11 @@ reload-back-dev:
 	kubectl delete deploy re-platform-back-dev
 	kubectl apply -f kube-back.dev.yaml
 
+.PHONY: infra-up-dev
+infra-up-dev:
+	kubectl apply -f kube-pvc.dev.yaml
+	kubectl apply -f kube-infra.dev.yaml
+
 .PHONY: kube-front-dev
 kube-front-dev: build-front-dev reload-front-dev
 
@@ -25,4 +30,14 @@ kube-front-dev: build-front-dev reload-front-dev
 kube-back-dev: build-back-dev reload-back-dev
 
 .PHONY: start-dev
-start-dev: reload-front-dev reload-back-dev
+up-dev: reload-front-dev reload-back-dev infra-up-dev
+
+.PHONY: shutdown-dev
+shutdown-dev:
+	kubectl apply -f kube-front.dev.yaml
+	kubectl apply -f kube-back.dev.yaml
+	kubectl apply -f kube-infra.dev.yaml
+	kubectl delete deploy re-platform-front-dev
+	kubectl delete deploy re-platform-back-dev
+	kubectl delete deploy re-platform-pg-dev
+

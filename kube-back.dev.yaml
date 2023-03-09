@@ -22,7 +22,9 @@ spec:
             - containerPort: 8080
           env:
             - name: DATABASE_URL
-              value: postgres://postgresadmin:admin123@re-platform-pg-dev.default:5432/postgresdb
+              value: postgres://replatformuser:replatformpassword@re-platform-pg-dev.default:5432/replatform
+            - name: PORT
+              value: '8080'
 ---
 apiVersion: v1
 kind: Service

@@ -1,0 +1,60 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: re-platform-pg-dev
+  labels:
+    app: re-platform-pg-dev
+data:
+  POSTGRES_DB: replatform
+  POSTGRES_USER: replatformuser
+  POSTGRES_PASSWORD: replatformpassword
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: re-platform-pg-dev
+  labels:
+    app: re-platform-pg-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: re-platform-pg-dev
+  template:
+    metadata:
+      labels:
+        project: re-platform-pg-dev
+    spec:
+      containers:
+        - name: re-platform-pg-dev
+          image: postgres:latest
+          imagePullPolicy: "IfNotPresent"
+          ports:
+            - containerPort: 5432
+          envFrom:
+            - configMapRef:
+                name: re-platform-pg-dev
+          volumeMounts:
+            - mountPath: /var/lib/postgresql/data
+              name: re-platform-pvc-claim
+      volumes:
+        - name: re-platform-pvc-claim
+          persistentVolumeClaim:
+            claimName: re-platform-pvc-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: re-platform-pg-dev
+  labels:
+    env: prod
+    owner: me
+spec:
+  selector:
+    project: re-platform-pg-dev
+  ports:
+    - name: pg
+      protocol: TCP
+      port: 5432  # port on load balancer
+      targetPort: 5432 # port on pod
+  type: LoadBalancer

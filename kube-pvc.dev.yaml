@@ -1,0 +1,30 @@
+---
+kind: PersistentVolume
+apiVersion: v1
+metadata:
+  name: re-platform-pv
+  labels:
+    type: local
+spec:
+  storageClassName: gp2
+  persistentVolumeReclaimPolicy: Recycle
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteOnce
+  hostPath:
+    path: "/mnt/data"
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  labels:
+    app: re-platform
+  name: re-platform-pvc-claim
+spec:
+  storageClassName: gp2
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
