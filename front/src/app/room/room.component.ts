@@ -1,18 +1,24 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { HttpClient } from '@angular/common/http';
 import { environment } from '../../environments/environment';
+import { RoomService } from '../services/room.service';
+import { filter } from 'rxjs';
 
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
-  ws: WebSocket = {} as WebSocket
-  roomID = 0
+export class RoomComponent implements OnInit, OnDestroy {
+  @ViewChild('localStream') localStream!: ElementRef<HTMLVideoElement>
+  @ViewChild('remoteStream') remoteStream!: ElementRef<HTMLVideoElement>
 
-  constructor(private route: ActivatedRoute, private http: HttpClient) {
+  ws: WebSocket = {} as WebSocket // TODO: temporal
+  roomID = 0
+  userID = '' // TODO: temporal
+
+
+  constructor(private route: ActivatedRoute, private _roomService: RoomService) {
     this.route.params.subscribe(params => {
       if (!!params['id']) {
         this.roomID = params['id']
@@ -21,17 +27,37 @@ export class RoomComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.userID = this._roomService.initPeer()
   }
 
-  ping() {
-    this.http.get(`http://localhost:${environment.port}/api/ping`, { responseType: 'text' }).subscribe({
-      next: data => {
-        console.log(data)
-      },
-      error: err => {
-        console.error(err)
-      }
-    })
+  ngAfterViewInit(): void {
+    this._roomService.localStream$
+      .pipe(filter(res => !!res))
+      .subscribe(stream => {
+        this.localStream.nativeElement.srcObject = stream
+      })
+    this._roomService.remoteStream$
+      .pipe(filter(res => !!res))
+      .subscribe((stream: any) => this.remoteStream.nativeElement.srcObject = stream)
+  }
+
+  async startStream() {
+    await this._roomService.enableCallAnswer()
+  }
+
+  async joinStream() {
+    console.log("pg: ", this.roomID)
+    // await this.impl2Service.establishMediaCall(this.userID)
+    await this._roomService.establishMediaCall(String(this.roomID))
+  }
+
+  closeStream() {
+    this._roomService.closeMediaCall()
+  }
+
+
+  ngOnDestroy(): void {
+    this._roomService.destroyPeer();
   }
 
   conn() {

@@ -6,7 +6,7 @@
     "start": "ng serve",
     "build": "ng build",
     "start:local": "ng serve --host 0.0.0.0 --poll 1000 --port 4200 --disable-host-check --configuration local",
-    "start:docker": "ng serve --host 0.0.0.0 --poll 1000 --port 4200 --disable-host-check",
+    "start:docker": "ng serve --host 0.0.0.0 --poll 1000 --port 4000 --disable-host-check",
     "watch": "ng build --watch --configuration development",
     "test": "ng test"
   },
@@ -22,6 +22,8 @@
     "@angular/platform-browser": "^15.2.4",
     "@angular/platform-browser-dynamic": "^15.2.4",
     "@angular/router": "^15.2.4",
+    "@types/uuid": "^9.0.1",
+    "peerjs": "^1.4.7",
     "rxjs": "~7.5.0",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
