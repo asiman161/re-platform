@@ -1,14 +1,14 @@
 include scripts/scripts.mk
 
-.PHONY: build-dev
-build-dev: kube-front-dev kube-back-dev
+.PHONY: build
+build: kube-front-dev kube-back-dev
 
 .PHONY: tunnel
 tunnel:
 	minikube tunnel
 
 .PHONY: up-dev
-up-dev: start-dev tunnel
+up-dev: start-dev
 
 # starts only infrastructure and peerserver
 .PHONY: up-simple-dev

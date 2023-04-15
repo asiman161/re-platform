@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Subject } from 'rxjs';
 import { MediaConnection, Peer, PeerJSOption } from 'peerjs';
 import { v4 as uuidv4 } from 'uuid';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +24,7 @@ export class RoomService {
     if (!this.peer || this.peer.disconnected) {
       const peerJsOptions: PeerJSOption = {
         debug: 3,
-        host: 'localhost',
+        host: environment.host,
         port: 3000,
         path: 'peerjs/myapp'
       };
@@ -46,13 +47,11 @@ export class RoomService {
       const connection = this.peer!.connect(remotePeerId);
       connection.on('error', err => {
         console.error(err);
-        // this.snackBar.open(err, 'Close');
       });
 
       this.mediaCall = this.peer!.call(remotePeerId, stream);
       if (!this.mediaCall) {
         let errorMessage = 'Unable to connect to remote peer';
-        // this.snackBar.open(errorMessage, 'Close');
         throw new Error(errorMessage);
       }
       this.localStreamBs.next(stream);

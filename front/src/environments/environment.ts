@@ -5,6 +5,7 @@
 export const environment = {
   production: false,
   port: 8080,
+  host: '192.168.2.35',
 };
 
 /*

@@ -14,9 +14,9 @@ build-back-dev:
 
 .PHONY: reload-back-dev
 reload-back-dev:
-	kubectl apply -f kube-peerserver.dev.yaml
-	kubectl delete deploy re-platform-peerserver-dev
-	kubectl apply -f kube-peerserver.dev.yaml
+	kubectl apply -f kube-back.dev.yaml
+	kubectl delete deploy re-platform-back-dev
+	kubectl apply -f kube-back.dev.yaml
 
 .PHONY: build-peerserver-dev
 build-peerserver-dev:
