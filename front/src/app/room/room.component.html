@@ -9,6 +9,7 @@
 <video #localStream autoplay style="width: 300px; height: 150px" [muted]=true></video>
 <video #remoteStream autoplay playsinline style="width: 600px; height: 300px"></video>
 <br>
+<button (click)="waitStream()">wait stream</button>
 <button (click)="startStream()">start stream</button>
 <button (click)="joinStream()">join stream</button>
 <button (click)="closeStream()">close stream</button>

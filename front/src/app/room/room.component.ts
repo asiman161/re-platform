@@ -31,6 +31,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
+
+  }
+
+  async waitStream() {
+    //  this should be in ngAfterViewInit
     this._roomService.localStream$
       .pipe(filter(res => !!res))
       .subscribe(stream => {

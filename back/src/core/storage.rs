@@ -15,7 +15,7 @@ pub struct Storage {
 
 pub fn new() -> Storage {
     Storage {
-        database_dsn: env::var("DATABASE_URL").expect("DATABASE_URL must be set"),
+        database_dsn: env::var("DATABASE_DSN").expect("DATABASE_DSN must be set"),
     }
 }
 
@@ -58,7 +58,7 @@ impl Storage {
 }
 
 pub fn init_pg_pool() -> DbPgPool {
-    let dsn = env::var("DATABASE_URL").expect("DATABASE_URL must be set");
+    let dsn = env::var("DATABASE_DSN").expect("DATABASE_DSN must be set");
     let manager = r2d2::ConnectionManager::<PgConnection>::new(dsn);
     r2d2::Pool::builder().build(manager).expect("database URL should be valid dsn to db")
 }

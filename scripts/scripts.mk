@@ -32,6 +32,7 @@ reload-peerserver-dev:
 infra-up-dev:
 	kubectl apply -f kube-pvc.dev.yaml
 	kubectl apply -f kube-infra.dev.yaml
+	reload-peerserver-dev
 
 .PHONY: peerserver-up-dev
 peerserver-up-dev:

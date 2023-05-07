@@ -20,7 +20,7 @@ spec:
           ports:
             - containerPort: 8080
           env:
-            - name: DATABASE_URL
+            - name: DATABASE_DSN
               value: postgres://replatformuser:replatformpassword@re-platform-pg-dev.default:5432/replatform
             - name: REDIS_DSN
               value: redis://re-platform-redis-dev:6379
