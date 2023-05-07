@@ -63,5 +63,6 @@ shutdown-dev:
 	kubectl delete deploy re-platform-front-dev
 	kubectl delete deploy re-platform-back-dev
 	kubectl delete deploy re-platform-pg-dev
+	kubectl delete deploy re-platform-redis-dev
 	kubectl delete deploy re-platform-peerserver-dev
 

@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::web;
+use actix_web::{web};
 
 use crate::core::handlers;
 
@@ -8,6 +8,7 @@ pub fn config(cfg: &mut web::ServiceConfig) {
         web::scope("/api")
             .service(handlers::ping)
             .service(handlers::users)
+            .service(handlers::get_user)
             .service(handlers::room)
     );
 }

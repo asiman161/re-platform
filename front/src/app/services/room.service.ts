@@ -62,14 +62,12 @@ export class RoomService {
           this.remoteStreamBs.next(remoteStream);
         });
       this.mediaCall.on('error', err => {
-        // this.snackBar.open(err, 'Close');
         console.error(err);
         this.isCallStartedBs.next(false);
       });
       this.mediaCall.on('close', () => this.onCallClose());
     } catch (ex) {
       console.error(ex);
-      // this.snackBar.open(ex, 'Close');
       this.isCallStartedBs.next(false);
     }
   }

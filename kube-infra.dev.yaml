@@ -9,6 +9,60 @@ data:
   POSTGRES_USER: replatformuser
   POSTGRES_PASSWORD: replatformpassword
 ---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: re-platform-redis-dev
+data:
+  redis-config: |
+    maxmemory 2mb
+    maxmemory-policy allkeys-lru
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: re-platform-redis-dev
+  labels:
+    app: re-platform-redis-dev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: re-platform-redis-dev
+  template:
+    metadata:
+      labels:
+        project: re-platform-redis-dev
+    spec:
+      containers:
+        - name: re-platform-redis-dev
+          image: redis:5.0.4
+          command:
+            - redis-server
+            - "/redis-master/redis.conf"
+          env:
+            - name: MASTER
+              value: "true"
+          ports:
+            - containerPort: 6379
+          resources:
+            limits:
+              cpu: "0.1"
+          volumeMounts:
+            - mountPath: /redis-master-data
+              name: data
+            - mountPath: /redis-master
+              name: config
+      volumes:
+        - name: data
+          emptyDir: { }
+        - name: config
+          configMap:
+            name: re-platform-redis-dev
+            items:
+              - key: redis-config
+                path: redis.conf
+---
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -55,6 +109,26 @@ spec:
   ports:
     - name: pg
       protocol: TCP
+      nodePort: 30953
       port: 5432  # port on load balancer
       targetPort: 5432 # port on pod
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: re-platform-redis-dev
+  labels:
+    env: prod
+    owner: me
+spec:
+  selector:
+    project: re-platform-redis-dev
+  ports:
+    - name: redis
+      protocol: TCP
+      nodePort: 30954
+      port: 6379  # port on load balancer
+      targetPort: 6379 # port on pod
   type: LoadBalancer

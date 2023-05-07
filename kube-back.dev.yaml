@@ -22,6 +22,8 @@ spec:
           env:
             - name: DATABASE_URL
               value: postgres://replatformuser:replatformpassword@re-platform-pg-dev.default:5432/replatform
+            - name: REDIS_DSN
+              value: redis://re-platform-redis-dev:6379
             - name: PORT
               value: '8080'
 ---
