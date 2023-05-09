@@ -10,6 +10,7 @@ type AppConfig struct {
 	DatabaseDSN string `env:"DATABASE_DSN,required"`
 	Host        string `env:"HOST" envDefault:"0.0.0.0"`
 	Port        int    `env:"PORT" envDefault:"80"`
+	RedisDSN    string `env:"REDIS_DSN,required"`
 }
 
 func NewApp(cfg AppConfig) (*replatform.Implementation, error) {
@@ -18,6 +19,11 @@ func NewApp(cfg AppConfig) (*replatform.Implementation, error) {
 		return nil, errors.Wrap(err, "can't init db")
 	}
 
-	store := storage.New(db)
+	rd, err := InitRD(cfg.RedisDSN)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't init rd")
+	}
+
+	store := storage.New(db, rd)
 	return replatform.New(store), nil
 }

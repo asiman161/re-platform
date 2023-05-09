@@ -1,16 +1,27 @@
 import { Injectable } from '@angular/core';
-import { BehaviorSubject, Subject } from 'rxjs';
+import { BehaviorSubject, Observable, Subject } from 'rxjs';
 import { MediaConnection, Peer, PeerJSOption } from 'peerjs';
 import { v4 as uuidv4 } from 'uuid';
 import { environment } from '../../environments/environment';
+import { HttpClient } from '@angular/common/http';
+
+interface Room {
+  id: number
+  name: string
+  author: string
+  is_open: boolean
+}
 
 @Injectable({
   providedIn: 'root'
 })
 export class RoomService {
 
+  constructor(private http: HttpClient) {
+  }
+
   private peer?: Peer;
-  private mediaCall: MediaConnection = <MediaConnection>{};
+  private mediaCall?: MediaConnection;
 
   private localStreamBs: BehaviorSubject<MediaStream> = new BehaviorSubject(new MediaStream());
   public localStream$ = this.localStreamBs.asObservable();
@@ -86,7 +97,6 @@ export class RoomService {
           this.remoteStreamBs.next(remoteStream);
         });
         this.mediaCall.on('error', err => {
-          // this.snackBar.open(err, 'Close');
           this.isCallStartedBs.next(false);
           console.error(err);
         });
@@ -107,8 +117,20 @@ export class RoomService {
     this.isCallStartedBs.next(false);
   }
 
+  public createRoom(name: string): Observable<Room> {
+    return this.http.post(`http://${environment.host}:${environment.port}/api/rooms`, { name }) as Observable<Room>
+  }
+
+  public closeRoom(id: string): Observable<string> {
+    return this.http.post(`http://${environment.host}:${environment.port}/api/rooms/${id}/close`, {}, { responseType: 'text' })
+  }
+
+  public getRooms(): Observable<Room[]> {
+    return this.http.get(`http://${environment.host}:${environment.port}/api/rooms`) as Observable<Room[]>
+  }
+
   private onCallClose() {
-    this.remoteStreamBs?.value.getTracks().forEach((track:any) => {
+    this.remoteStreamBs?.value.getTracks().forEach((track: any) => {
       track.stop();
     });
     this.localStreamBs?.value.getTracks().forEach(track => {
@@ -118,8 +140,8 @@ export class RoomService {
   }
 
   public destroyPeer() {
-    this.mediaCall?.close();
-    this.peer?.disconnect();
-    this.peer?.destroy();
+    this.mediaCall?.close()
+    this.peer?.disconnect()
+    this.peer?.destroy()
   }
 }

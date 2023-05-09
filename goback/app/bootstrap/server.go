@@ -25,7 +25,7 @@ func registerMiddlewares(r *chi.Mux) {
 		AllowedOrigins: []string{"https://*", "http://*"},
 		// AllowOriginFunc:  func(r *http.Request, origin string) bool { return true },
 		AllowedMethods:   []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
-		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token"},
+		AllowedHeaders:   []string{"Accept", "Authorization", "Content-Type", "X-CSRF-Token", "First-name", "Last-name", "Email", "User-id"},
 		ExposedHeaders:   []string{"Link"},
 		AllowCredentials: false,
 		MaxAge:           300, // Maximum value not ignored by any of major browsers
@@ -37,6 +37,14 @@ func registerHandlers(r *chi.Mux, i *replatform.Implementation) {
 	r.Route("/api", func(r chi.Router) {
 		r.Get("/ping", i.Ping)
 		r.Get("/users", i.Users)
-		r.HandleFunc("/room/{ID}", i.Room)
+
+		r.Route("/rooms", func(r chi.Router) {
+			r.Get("/", i.GetRooms)
+			r.Post("/", i.CreateRoom)
+			r.HandleFunc("/{ID}", i.Room)
+			r.Post("/{ID}/close", i.CloseRoom)
+			r.Get("/{ID}/chat", i.GetMessages)
+		})
+
 	})
 }

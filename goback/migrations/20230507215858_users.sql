@@ -3,11 +3,14 @@
 create table users
 (
     id            serial primary key,
-    username      text      not null,
-    password_hash text      not null,
-    password_salt text      not null,
-    created_at    timestamp not null default now(),
-    updated_at    timestamp not null default now()
+    first_name    text        not null,
+    last_name     text        not null,
+    email         text        not null,
+    oauth_id      text        not null,
+    password_hash text        not null,
+    password_salt text        not null,
+    created_at    timestamptz not null default now(),
+    updated_at    timestamptz not null default now()
 );
 -- +goose StatementEnd
 

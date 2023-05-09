@@ -1,8 +1,8 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { environment } from '../../environments/environment';
 import { RoomService } from '../services/room.service';
 import { filter } from 'rxjs';
+import { WebsocketService } from '../services/websocket.service';
 
 @Component({
   selector: 'app-room',
@@ -18,7 +18,7 @@ export class RoomComponent implements OnInit, OnDestroy {
   userID = '' // TODO: temporal
 
 
-  constructor(private route: ActivatedRoute, private _roomService: RoomService) {
+  constructor(private route: ActivatedRoute, private _roomService: RoomService, private websocketService: WebsocketService) {
     this.route.params.subscribe(params => {
       if (!!params['id']) {
         this.roomID = params['id']
@@ -66,24 +66,10 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   conn() {
-    this.ws = new WebSocket(`ws://localhost:${environment.port}/api/room/${this.roomID}`);
-
-    this.ws.onopen = () => {
-      this.ws.onmessage = (event) => {
-        if (event.data == "ping") {
-          this.ws.send("pong")
-          return
-        }
-        console.log(event);
-      }
-
-      this.ws.send("Here's some text that the server is urgently awaiting!");
-    };
-
-
+    this.websocketService.conn(String(this.roomID))
   }
 
   sendMsg() {
-    this.ws.send("random text");
+    this.websocketService.sendMsg()
   }
 }
