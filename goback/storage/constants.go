@@ -2,6 +2,7 @@ package storage
 
 const (
 	usersTable = "users"
-	chatTable  = "chat"
+	chatTable  = "chats"
 	roomTable  = "rooms"
+	poolsTable = "pools"
 )

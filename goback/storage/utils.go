@@ -1,7 +1,14 @@
 package storage
 
-import "fmt"
+import (
+	"fmt"
+	"strings"
+)
 
-func redisChatID(id string) string {
-	return fmt.Sprintf("chat:%s", id)
+func redisRoomID(id string) string {
+	return fmt.Sprintf("room:%s", id)
+}
+
+func suffixReturning(columns []string) string {
+	return fmt.Sprintf("RETURNING %s", strings.Join(columns, ","))
 }

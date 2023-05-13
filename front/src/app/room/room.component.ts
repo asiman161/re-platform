@@ -3,6 +3,8 @@ import { ActivatedRoute } from '@angular/router';
 import { RoomService } from '../services/room.service';
 import { filter } from 'rxjs';
 import { WebsocketService } from '../services/websocket.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { AuthService } from '../services/auth.service';
 
 @Component({
   selector: 'app-room',
@@ -14,11 +16,11 @@ export class RoomComponent implements OnInit, OnDestroy {
   @ViewChild('remoteStream') remoteStream!: ElementRef<HTMLVideoElement>
 
   ws: WebSocket = {} as WebSocket // TODO: temporal
-  roomID = 0
+  roomID = ''
   userID = '' // TODO: temporal
 
 
-  constructor(private route: ActivatedRoute, private _roomService: RoomService, private websocketService: WebsocketService) {
+  constructor(private route: ActivatedRoute, private _roomService: RoomService, private _snackBar: MatSnackBar, private authService: AuthService, private websocketService: WebsocketService) {
     this.route.params.subscribe(params => {
       if (!!params['id']) {
         this.roomID = params['id']
@@ -26,7 +28,20 @@ export class RoomComponent implements OnInit, OnDestroy {
     })
   }
 
+  closeRoom(): void {
+    this._roomService.closeRoom(this.roomID).subscribe({
+      next: () => {
+        this._snackBar.open(`room with id ${this.roomID} closed`, "Close")
+      },
+      error: () => {
+        this._snackBar.open(`Failed to close room ${this.roomID}`, "Close")
+      }
+    })
+  }
+
+
   ngOnInit(): void {
+    // this.userID = this._roomService.initPeer(this.authService.user?.id || '')
     this.userID = this._roomService.initPeer()
   }
 
@@ -52,7 +67,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   async joinStream() {
     console.log("pg: ", this.roomID)
-    // await this.impl2Service.establishMediaCall(this.userID)
+    // await this._roomService.establishMediaCall(this.userID)
     await this._roomService.establishMediaCall(String(this.roomID))
   }
 

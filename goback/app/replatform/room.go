@@ -21,32 +21,28 @@ var upgrader = websocket.Upgrader{CheckOrigin: func(r *http.Request) bool {
 func (i *Implementation) CreateRoom(w http.ResponseWriter, r *http.Request) {
 	req := models.Room{}
 
-	u := r.Header.Get("Email")
-	fmt.Println(r.Header, u)
-
 	err := json.NewDecoder(r.Body).Decode(&req)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		render.PlainText(w, r, "can't decode room")
+		writeError(w, r, http.StatusInternalServerError, "can't decode room")
+		return
 	}
 
 	newRoom, err := i.store.CreateRoom(r.Context(), req.Name, extractAuthor(r))
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		render.PlainText(w, r, "can't create room")
+		writeError(w, r, http.StatusInternalServerError, "can't create room")
+		return
 	}
 
 	render.JSON(w, r, newRoom)
 }
 
 func (i *Implementation) CloseRoom(w http.ResponseWriter, r *http.Request) {
-	roomID := chi.URLParam(r, "ID")
+	roomID := chi.URLParam(r, "room_ID")
 
 	err := i.store.CloseRoom(r.Context(), roomID, extractAuthor(r))
 	if err != nil {
 		if err == sql.ErrNoRows {
-			w.WriteHeader(http.StatusNotFound)
-			render.PlainText(w, r, fmt.Sprintf("can't find room: %s", roomID))
+			writeError(w, r, http.StatusNotFound, fmt.Sprintf("can't find room: %s", roomID))
 			return
 		}
 		w.WriteHeader(http.StatusInternalServerError)
@@ -59,8 +55,8 @@ func (i *Implementation) CloseRoom(w http.ResponseWriter, r *http.Request) {
 func (i *Implementation) GetRooms(w http.ResponseWriter, r *http.Request) {
 	rooms, err := i.store.GetOpenRooms(r.Context())
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
 		render.PlainText(w, r, "can't get rooms")
+		writeError(w, r, http.StatusInternalServerError, "can't get rooms")
 		return
 	}
 
@@ -68,13 +64,12 @@ func (i *Implementation) GetRooms(w http.ResponseWriter, r *http.Request) {
 }
 
 func (i *Implementation) Room(w http.ResponseWriter, r *http.Request) {
-	roomID := chi.URLParam(r, "ID")
+	roomID := chi.URLParam(r, "room_ID")
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		render.PlainText(w, r, "can't open socket connection")
 		log.Print("upgrade:", err)
+		writeError(w, r, http.StatusInternalServerError, "can't open socket connection")
 		return
 	}
 
@@ -83,12 +78,12 @@ func (i *Implementation) Room(w http.ResponseWriter, r *http.Request) {
 }
 
 func (i *Implementation) GetMessages(w http.ResponseWriter, r *http.Request) {
-	roomID := chi.URLParam(r, "ID")
+	roomID := chi.URLParam(r, "room_ID")
 
 	messages, err := i.store.GetMessages(r.Context(), roomID)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		render.PlainText(w, r, "can't save message")
+		writeError(w, r, http.StatusInternalServerError, "can't save message")
+		return
 	}
 
 	render.JSON(w, r, messages)

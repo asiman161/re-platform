@@ -51,7 +51,7 @@ func (r *Room) Connect() {
 				}
 
 				msg := models.ChatMessage{
-					ChatID:    r.roomID,
+					RoomID:    r.roomID,
 					Content:   wsMessage.Content,
 					Author:    wsMessage.Email,
 					CreatedAt: time.Now(),

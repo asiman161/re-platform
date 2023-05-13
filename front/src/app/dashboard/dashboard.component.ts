@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { AppService } from '../services/app.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { RoomService } from '../services/room.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-dashboard',
@@ -9,7 +10,8 @@ import { RoomService } from '../services/room.service';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
-  constructor(private _appService: AppService, private roomService: RoomService, private _snackBar: MatSnackBar) {}
+  constructor(private router: Router, private _appService: AppService, private roomService: RoomService, private _snackBar: MatSnackBar) {
+  }
 
   ping() {
     this._appService.ping().subscribe({
@@ -27,14 +29,15 @@ export class DashboardComponent implements OnInit {
 
   createRoom(): void {
     this.roomService.createRoom("new custom room").subscribe({
-      next: value => {
-        this._snackBar.open(`room with name ${value.name} created`, "Close")
+      next: room => {
+        this.router.navigateByUrl(`/room/${room.id}`)
       },
       error: () => {
         this._snackBar.open("Failed to create room", "Close")
       }
     })
   }
+
   getRooms(): void {
     this.roomService.getRooms().subscribe({
       next: rooms => {
@@ -45,17 +48,4 @@ export class DashboardComponent implements OnInit {
       }
     })
   }
-  closeRoom(): void {
-    const id = "13"
-    this.roomService.closeRoom(id).subscribe({
-      next: () => {
-        this._snackBar.open(`room with id ${id} closed`, "Close")
-      },
-      error: () => {
-        this._snackBar.open(`Failed to close room ${id}`, "Close")
-      }
-    })
-
-  }
-
 }
