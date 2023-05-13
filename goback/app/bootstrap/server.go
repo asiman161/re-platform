@@ -42,7 +42,8 @@ func registerHandlers(r *chi.Mux, i *replatform.Implementation) {
 			r.Get("/", i.GetRooms)
 			r.Post("/", i.CreateRoom)
 			r.Route("/{room_ID}", func(r chi.Router) {
-				r.HandleFunc("/", i.Room)
+				r.Get("/", i.GetRoom)
+				r.HandleFunc("/ws", i.Room)
 				r.Post("/close", i.CloseRoom)
 				r.Get("/chat", i.GetMessages)
 				r.Route("/pools", func(r chi.Router) {

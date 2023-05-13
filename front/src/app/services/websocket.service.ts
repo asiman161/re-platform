@@ -13,7 +13,7 @@ export class WebsocketService {
   }
 
   conn(roomID: string) {
-    this.ws = new WebSocket(`ws://localhost:${environment.port}/api/rooms/${roomID}`);
+    this.ws = new WebSocket(`ws://localhost:${environment.port}/api/rooms/${roomID}/ws`);
 
     this.ws.onopen = () => {
       this.ws.onmessage = (event) => {
@@ -28,12 +28,12 @@ export class WebsocketService {
         content: "Here's some text that the server is urgently awaiting!"
       })
 
-      this.ws.send(this.makeWSMessage("Here's some text that the server is urgently awaiting!"));
+      // this.ws.send(this.makeWSMessage("Here's some text that the server is urgently awaiting!"));
     };
   }
 
-  sendMsg() {
-    this.ws.send(this.makeWSMessage("random text"));
+  sendMsg(msg: string) {
+    this.ws.send(this.makeWSMessage(msg));
   }
 
   makeWSMessage(content: string): string {

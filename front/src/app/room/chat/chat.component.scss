@@ -1,0 +1,45 @@
+.container {
+  height: 100%;
+  display: grid;
+  grid-template-columns: 2fr;
+  grid-template-rows: 4fr 1fr;
+  grid-column-gap: 16px;
+  grid-row-gap: 16px;
+}
+
+.chat {
+  //background: rgba(255, 196, 0, 0.2);
+}
+
+mat-card-content {
+  position: absolute;
+  height: calc(100% - 32px);
+  width: calc(100% - 32px);
+  overflow-y: scroll;
+}
+
+.message {
+  background: #f5f5f5;
+  border-radius: 12px;
+  width: calc(90% - 32px);
+  padding: 8px 16px;
+  &.personalMessage {
+    margin-left: auto;
+    background: #f1ffec;
+  }
+  > .author {
+    font-size: 12px;
+    font-weight: 500;
+  }
+  > .content {
+    font-size: 16px;
+  }
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  textarea {
+    resize: none;
+  }
+}

@@ -1,21 +1,15 @@
-<a [routerLink]="['']">
-  Dashboard
-</a>
+<mat-card class="mbS" *ngIf="room.author === user.email">
+  <mat-card-content>
+    <button mat-raised-button color="primary" (click)="closeRoom()">close room</button>
+  </mat-card-content>
+</mat-card>
 
-<p>room works!</p>
-<br>
-<a href="http://localhost:4200/room/{{this.userID}}">http://localhost:4200/room/{{this.userID}}</a>
-<br>
-<video #localStream autoplay style="width: 300px; height: 150px" [muted]=true></video>
-<video #remoteStream autoplay playsinline style="width: 600px; height: 300px"></video>
-<br>
-<button (click)="waitStream()">wait stream</button>
-<button (click)="startStream()">start stream</button>
-<button (click)="joinStream()">join stream</button>
-<button (click)="closeStream()">close stream</button>
-<br>
-<button (click)="conn()">conn</button>
-<button (click)="sendMsg()">send msg to ws</button>
-<br>
-<button mat-raised-button color="primary" (click)="closeRoom()">close room</button>
+<div class="roomContainer" [ngClass]="{'owner': room.author === user.email}">
+  <app-online [roomID]="this.roomID"></app-online>
+  <app-chat [roomID]="this.roomID" [user]="this.user"></app-chat>
+  <div class="stream">
+    <app-stream></app-stream>
+  </div>
 
+  <div class="pools"></div>
+</div>

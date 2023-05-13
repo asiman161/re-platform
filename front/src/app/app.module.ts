@@ -23,6 +23,17 @@ import { AuthComponent } from './auth/auth.component';
 import { AuthGuardService } from './services/auth-guard.service';
 import { AuthService } from './services/auth.service';
 import { AuthInterceptor } from './intercepotors/auth.interceptor';
+import { StreamComponent } from './room/stream/stream.component';
+import { CallInfoDialogComponents } from './room/stream/dialog/callinfo-dialog.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { MatDialogModule } from '@angular/material/dialog';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
+import { ChatComponent } from './room/chat/chat.component';
+import { MatCardModule } from '@angular/material/card';
+import { ChatService } from './services/chat.service';
+import { OnlineComponent } from './room/online/online.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -30,25 +41,37 @@ import { AuthInterceptor } from './intercepotors/auth.interceptor';
     AppComponent,
     DashboardComponent,
     RoomComponent,
-    AuthComponent
+    AuthComponent,
+    StreamComponent,
+    CallInfoDialogComponents,
+    ChatComponent,
+    OnlineComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    SocialLoginModule,
-    GoogleSigninButtonModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        SocialLoginModule,
+        GoogleSigninButtonModule,
+        MatFormFieldModule,
+        ClipboardModule,
+        MatDialogModule,
+        MatInputModule,
+        MatCardModule,
+        ReactiveFormsModule,
+    ],
   providers: [
     AppService,
     RoomService,
     AuthGuardService,
     AuthService,
+    ChatService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
     {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
     {

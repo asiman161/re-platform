@@ -63,6 +63,19 @@ func (i *Implementation) GetRooms(w http.ResponseWriter, r *http.Request) {
 	render.JSON(w, r, rooms)
 }
 
+func (i *Implementation) GetRoom(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "room_ID")
+
+	foundRoom, err := i.store.GetRoom(r.Context(), roomID)
+	if err != nil {
+		render.PlainText(w, r, "can't get rooms")
+		writeError(w, r, http.StatusInternalServerError, "can't get rooms")
+		return
+	}
+
+	render.JSON(w, r, foundRoom)
+}
+
 func (i *Implementation) Room(w http.ResponseWriter, r *http.Request) {
 	roomID := chi.URLParam(r, "room_ID")
 

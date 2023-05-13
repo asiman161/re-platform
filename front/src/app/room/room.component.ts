@@ -1,10 +1,10 @@
 import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
-import { RoomService } from '../services/room.service';
-import { filter } from 'rxjs';
+import { Room, RoomService } from '../services/room.service';
 import { WebsocketService } from '../services/websocket.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../services/auth.service';
+import { SocialUser } from '@abacritt/angularx-social-login';
 
 @Component({
   selector: 'app-room',
@@ -17,16 +17,24 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ws: WebSocket = {} as WebSocket // TODO: temporal
   roomID = ''
-  userID = '' // TODO: temporal
+  room: Room = <Room>{}
+  user: SocialUser = <SocialUser>{}
 
 
-  constructor(private route: ActivatedRoute, private _roomService: RoomService, private _snackBar: MatSnackBar, private authService: AuthService, private websocketService: WebsocketService) {
+  constructor(private route: ActivatedRoute,
+              private _roomService: RoomService,
+              private _snackBar: MatSnackBar,
+              private authService: AuthService) {
     this.route.params.subscribe(params => {
       if (!!params['id']) {
         this.roomID = params['id']
       }
     })
+
+    this.user = this.authService.user!
   }
+
+
 
   closeRoom(): void {
     this._roomService.closeRoom(this.roomID).subscribe({
@@ -41,50 +49,21 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 
   ngOnInit(): void {
+    this._roomService.getRoom(this.roomID).subscribe({
+      next: room => {
+        this.room = room
+      },
+      error: err => {
+        this._snackBar.open(`can't get room ${err}`, "Close")
+      }
+    })
     // this.userID = this._roomService.initPeer(this.authService.user?.id || '')
-    this.userID = this._roomService.initPeer()
   }
 
   ngAfterViewInit(): void {
 
   }
 
-  async waitStream() {
-    //  this should be in ngAfterViewInit
-    this._roomService.localStream$
-      .pipe(filter(res => !!res))
-      .subscribe(stream => {
-        this.localStream.nativeElement.srcObject = stream
-      })
-    this._roomService.remoteStream$
-      .pipe(filter(res => !!res))
-      .subscribe((stream: any) => this.remoteStream.nativeElement.srcObject = stream)
-  }
-
-  async startStream() {
-    await this._roomService.enableCallAnswer()
-  }
-
-  async joinStream() {
-    console.log("pg: ", this.roomID)
-    // await this._roomService.establishMediaCall(this.userID)
-    await this._roomService.establishMediaCall(String(this.roomID))
-  }
-
-  closeStream() {
-    this._roomService.closeMediaCall()
-  }
-
-
   ngOnDestroy(): void {
-    this._roomService.destroyPeer();
-  }
-
-  conn() {
-    this.websocketService.conn(String(this.roomID))
-  }
-
-  sendMsg() {
-    this.websocketService.sendMsg()
   }
 }

@@ -37,7 +37,7 @@ func (s Storage) GetMessages(ctx context.Context, chatID string) ([]models.ChatM
 	messages := make([]models.ChatMessage, 0)
 	q, args, _ := sq.Select(models.ChatColumns...).
 		From(chatTable).
-		Where(sq.Eq{"chat_id": chatID}).PlaceholderFormat(sq.Dollar).ToSql()
+		Where(sq.Eq{"room_id": chatID}).OrderBy("created_at").PlaceholderFormat(sq.Dollar).ToSql()
 
 	err := s.db.SelectContext(ctx, &messages, q, args...)
 	if err != nil {

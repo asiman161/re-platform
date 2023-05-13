@@ -1,8 +1,11 @@
 <p>Dashboard works!</p>
 
-<a [routerLink]="['/room/1']">
-  room 1
-</a>
+<ul>
+  <li *ngFor="let room of rooms">
+    <a [routerLink]="['/room', room.id]">room {{room.id}}</a>
+  </li>
+</ul>
+
 
 <button (click)="ping()">ping</button>
 <button mat-raised-button color="primary" (click)="createRoom()">Create room</button>

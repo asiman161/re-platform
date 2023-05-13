@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { AppService } from '../services/app.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { RoomService } from '../services/room.service';
+import { Room, RoomService } from '../services/room.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -10,6 +10,8 @@ import { Router } from '@angular/router';
   styleUrls: ['./dashboard.component.scss']
 })
 export class DashboardComponent implements OnInit {
+  rooms: Room[] = []
+
   constructor(private router: Router, private _appService: AppService, private roomService: RoomService, private _snackBar: MatSnackBar) {
   }
 
@@ -25,6 +27,10 @@ export class DashboardComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.roomService.getRooms().subscribe({
+      next: rooms => this.rooms = rooms,
+      error: () => this._snackBar.open("Failed to get rooms", "Close")
+    })
   }
 
   createRoom(): void {

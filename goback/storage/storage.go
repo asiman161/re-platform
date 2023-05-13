@@ -17,6 +17,7 @@ import (
 
 type Storager interface {
 	GetOpenRooms(ctx context.Context) ([]models.Room, error)
+	GetRoom(ctx context.Context, roomID string) (models.Room, error)
 	CreateRoom(ctx context.Context, name, author string) (models.Room, error)
 	CloseRoom(ctx context.Context, roomID, author string) error
 
@@ -37,9 +38,24 @@ type Storage struct {
 	rd *redis.Client
 }
 
+func (s Storage) GetRoom(ctx context.Context, roomID string) (models.Room, error) {
+	room := models.Room{}
+	q, args, _ := sq.Select(models.RoomColumns...).From(roomTable).Where(sq.Eq{"id": roomID}).PlaceholderFormat(sq.Dollar).ToSql()
+
+	err := s.db.GetContext(ctx, &room, q, args...)
+	if err != nil {
+		return models.Room{}, errors.Wrap(err, "can't get room")
+	}
+
+	return room, nil
+}
+
 func (s Storage) GetOpenRooms(ctx context.Context) ([]models.Room, error) {
 	rooms := make([]models.Room, 0)
-	q, args, _ := sq.Select(models.RoomColumns...).From(roomTable).Where(sq.Eq{"is_open": true}).PlaceholderFormat(sq.Dollar).ToSql()
+	q, args, _ := sq.Select(models.RoomColumns...).From(roomTable).
+		Where(sq.Eq{"is_open": true}).
+		OrderBy("id").
+		PlaceholderFormat(sq.Dollar).ToSql()
 
 	err := s.db.SelectContext(ctx, &rooms, q, args...)
 	if err != nil {
