@@ -13,16 +13,30 @@ var RoomColumns = []string{"id", "name", "author", "is_open", "created_at", "upd
 var PoolColumns = []string{"id", "room_id", "author", "content", "variants", "answers", "is_open", "created_at", "updated_at"}
 
 type RdMessage struct {
-	Type string      `json:"type"`
-	Data ChatMessage `json:"data"`
+	Type string `json:"type"`
+	Data string `json:"data"`
 }
 
-func MakeRdMessage(msgType string, data ChatMessage) []byte {
+type Marshaller interface {
+	Marshall() []byte
+}
+
+func MakeRdMessage(msgType string, data Marshaller) []byte {
 	bts, _ := json.Marshal(RdMessage{
 		Type: msgType,
-		Data: data,
+		Data: string(data.Marshall()),
 	})
 
+	return bts
+}
+
+func (cm *ChatMessage) Marshall() []byte {
+	bts, _ := json.Marshal(cm)
+	return bts
+}
+
+func (cm *Pool) Marshall() []byte {
+	bts, _ := json.Marshal(cm)
 	return bts
 }
 

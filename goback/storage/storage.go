@@ -25,7 +25,7 @@ type Storager interface {
 
 	WriteChatMessage(ctx context.Context, message models.ChatMessage) (models.ChatMessage, error)
 	GetMessages(ctx context.Context, chatID string) ([]models.ChatMessage, error)
-	SubscribeMessages(ctx context.Context, chatID string) (chan models.ChatMessage, error)
+	SubscribeMessages(ctx context.Context, chatID string) (chan models.RdMessage, error)
 
 	CreatePool(ctx context.Context, pool models.Pool) (models.Pool, error)
 	ClosePool(ctx context.Context, id int) error

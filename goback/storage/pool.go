@@ -3,7 +3,6 @@ package storage
 import (
 	"context"
 	"database/sql"
-	"encoding/json"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -27,8 +26,7 @@ func (s Storage) CreatePool(ctx context.Context, pool models.Pool) (models.Pool,
 		return models.Pool{}, errors.Wrap(err, "[store.CreatePool] can't insert new pool")
 	}
 
-	//bts := models.MakeRdMessage("pool", newPool)
-	bts, _ := json.Marshal(newPool)
+	bts := models.MakeRdMessage("pool", &newPool)
 	_, err = s.rd.Publish(ctx, redisRoomID(newPool.RoomID), string(bts)).Result()
 	if err != nil {
 		return models.Pool{}, errors.Wrap(err, "[store.CreatePool] can't publish chat message to redis")

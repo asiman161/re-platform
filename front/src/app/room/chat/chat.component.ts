@@ -54,7 +54,8 @@ export class ChatComponent implements OnInit, OnDestroy {
   scrollToBottom = () => {
     try {
       this.content.nativeElement.scrollTop = this.content.nativeElement.scrollHeight;
-    } catch (err) {}
+    } catch (err) {
+    }
   }
 
   conn() {
@@ -62,7 +63,17 @@ export class ChatComponent implements OnInit, OnDestroy {
 
     this.ws.subscribe({
       next: v => {
-        this.messages.push(v)
+        switch (v.type) {
+          case 'message':
+            this.messages.push(JSON.parse(v.data))
+            break
+          case 'pool':
+            console.log("got pool: ", JSON.parse(v.data))
+            break
+          default:
+            this.snackBar.open(`unknown websocket message type: ${v.type}`, 'close')
+            break
+        }
       }
     })
   }
@@ -77,7 +88,6 @@ export class ChatComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.ws.complete()
   }
-
 
 
 }
