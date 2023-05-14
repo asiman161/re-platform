@@ -46,7 +46,7 @@ func (s Storage) GetMessages(ctx context.Context, chatID string) ([]models.ChatM
 	return messages, nil
 }
 
-// SubscribeMessages TODO: handle all events
+// SubscribeMessages subscribes to all websocket messages in room
 func (s Storage) SubscribeMessages(ctx context.Context, roomID string) (chan models.RdMessage, error) {
 	pubsub := s.rd.Subscribe(ctx, redisRoomID(roomID))
 	rdch := pubsub.Channel()
