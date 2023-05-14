@@ -1,7 +1,7 @@
 <div class="container">
   <mat-card>
-    <mat-card-content>
-      <div class="message mbXS" *ngFor="let message of messages"
+    <mat-card-content #content>
+      <div class="message mbXS" #messagesElem *ngFor="let message of messages"
            [ngClass]="{'personalMessage': message.author === this.user.email}">
         <div class="author">{{message.author}}</div>
         <div class="content">{{message.content}}</div>
