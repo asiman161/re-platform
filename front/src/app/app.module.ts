@@ -37,6 +37,8 @@ import { OnlineComponent } from './room/online/online.component';
 import { QuizComponent } from './room/quiz/quiz.component';
 import { CreateQuizDialogComponent } from './room/quiz/create-quiz-dialog/create-quiz-dialog.component';
 import { ShowQuizDialogComponent } from './room/quiz/show-quiz-dialog/show-quiz-dialog.component';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { MatTableModule } from '@angular/material/table';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -53,25 +55,27 @@ import { ShowQuizDialogComponent } from './room/quiz/show-quiz-dialog/show-quiz-
     CreateQuizDialogComponent,
     ShowQuizDialogComponent,
   ],
-    imports: [
-        BrowserModule,
-        AppRoutingModule,
-        HttpClientModule,
-        FormsModule,
-        BrowserAnimationsModule,
-        MatToolbarModule,
-        MatIconModule,
-        MatButtonModule,
-        MatSnackBarModule,
-        SocialLoginModule,
-        GoogleSigninButtonModule,
-        MatFormFieldModule,
-        ClipboardModule,
-        MatDialogModule,
-        MatInputModule,
-        MatCardModule,
-        ReactiveFormsModule,
-    ],
+  imports: [
+    BrowserModule,
+    AppRoutingModule,
+    HttpClientModule,
+    FormsModule,
+    BrowserAnimationsModule,
+    MatToolbarModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    SocialLoginModule,
+    GoogleSigninButtonModule,
+    MatFormFieldModule,
+    ClipboardModule,
+    MatDialogModule,
+    MatInputModule,
+    MatCardModule,
+    ReactiveFormsModule,
+    NgxChartsModule,
+    MatTableModule,
+  ],
   providers: [
     AppService,
     RoomService,
@@ -79,7 +83,7 @@ import { ShowQuizDialogComponent } from './room/quiz/show-quiz-dialog/show-quiz-
     AuthService,
     ChatService,
     { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    {provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: {duration: 2500}},
+    { provide: MAT_SNACK_BAR_DEFAULT_OPTIONS, useValue: { duration: 2500 } },
     {
       provide: 'SocialAuthServiceConfig',
       useValue: {
@@ -96,4 +100,5 @@ import { ShowQuizDialogComponent } from './room/quiz/show-quiz-dialog/show-quiz-
     }
   ]
 })
-export class AppModule { }
+export class AppModule {
+}

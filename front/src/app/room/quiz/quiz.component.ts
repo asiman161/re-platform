@@ -22,7 +22,7 @@ export class QuizComponent {
     const dialogData: DialogData = { quiz: quiz, user: this.user }
 
     this.dialog.open(ShowQuizDialogComponent, {
-      width: '400px',
+      width: '800px',
       data: dialogData
     })
   }

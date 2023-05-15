@@ -32,7 +32,7 @@ func (i *Implementation) CreateQuiz(w http.ResponseWriter, r *http.Request) {
 }
 
 func (i *Implementation) AnswerQuiz(w http.ResponseWriter, r *http.Request) {
-	poolID, err := strconv.Atoi(chi.URLParam(r, "quiz_ID"))
+	quizID, err := strconv.Atoi(chi.URLParam(r, "quiz_ID"))
 	if err != nil {
 		writeError(w, r, http.StatusBadRequest, "can't parse quiz ID")
 		return
@@ -52,7 +52,7 @@ func (i *Implementation) AnswerQuiz(w http.ResponseWriter, r *http.Request) {
 		Author:    author,
 	}
 
-	err = i.store.AnswerQuiz(r.Context(), poolID, answer)
+	err = i.store.AnswerQuiz(r.Context(), quizID, answer)
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "can't update quiz with answer")
 		return
@@ -62,7 +62,7 @@ func (i *Implementation) AnswerQuiz(w http.ResponseWriter, r *http.Request) {
 }
 
 func (i *Implementation) CloseQuiz(w http.ResponseWriter, r *http.Request) {
-	poolID, err := strconv.Atoi(chi.URLParam(r, "quiz_ID"))
+	quizID, err := strconv.Atoi(chi.URLParam(r, "quiz_ID"))
 	if err != nil {
 		writeError(w, r, http.StatusBadRequest, "can't parse quiz ID")
 		return
@@ -70,9 +70,9 @@ func (i *Implementation) CloseQuiz(w http.ResponseWriter, r *http.Request) {
 
 	author := extractAuthor(r)
 
-	err = i.store.CloseQuiz(r.Context(), poolID, author)
+	err = i.store.CloseQuiz(r.Context(), quizID, author)
 	if err != nil {
-		writeError(w, r, http.StatusInternalServerError, fmt.Sprintf("can't close quiz: %d, err: %v", poolID, err.Error()))
+		writeError(w, r, http.StatusInternalServerError, fmt.Sprintf("can't close quiz: %d, err: %v", quizID, err.Error()))
 		return
 	}
 
@@ -85,11 +85,11 @@ func (i *Implementation) GetQuizzes(w http.ResponseWriter, r *http.Request) {
 
 	onlyOpen, _ := strconv.ParseBool(r.URL.Query().Get("is_open"))
 
-	pools, err := i.store.GetQuizzes(r.Context(), roomID, onlyOpen)
+	quizzes, err := i.store.GetQuizzes(r.Context(), roomID, onlyOpen)
 	if err != nil {
-		writeError(w, r, http.StatusBadRequest, fmt.Sprintf("can't get pools by room: %s", roomID))
+		writeError(w, r, http.StatusBadRequest, fmt.Sprintf("can't get quizzes by room: %s", roomID))
 		return
 	}
 
-	render.JSON(w, r, pools)
+	render.JSON(w, r, quizzes)
 }

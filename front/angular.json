@@ -20,6 +20,7 @@
             "allowedCommonJsDependencies": [
               "rtcpeerconnection-shim",
               "sdp",
+              "rfdc",
               "peerjs-js-binarypack"
             ],
             "outputPath": "dist/front",
