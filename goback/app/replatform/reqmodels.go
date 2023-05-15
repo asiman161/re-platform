@@ -1,5 +1,5 @@
 package replatform
 
-type poolAnswerReq struct {
+type quizAnswerReq struct {
 	VariantID int `json:"variant_id"`
 }

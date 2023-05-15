@@ -21,4 +21,8 @@ export class ChatService {
   getMessages(roomID: string): Observable<ChatMessage[]> {
     return this.http.get(`http://${environment.host}:${environment.port}/api/rooms/${roomID}/chat`) as Observable<ChatMessage[]>
   }
+
+  sendMessage(roomID: string, msg: string): Observable<ChatMessage[]> {
+    return this.http.post(`http://${environment.host}:${environment.port}/api/rooms/${roomID}/chat`, { content: msg }) as Observable<ChatMessage[]>
+  }
 }

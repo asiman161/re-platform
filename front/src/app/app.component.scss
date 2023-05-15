@@ -13,10 +13,22 @@ body {
 }
 
 .mbS {
-  margin-bottom: 16px;
+  margin-bottom: var(--sizeS);
 }
 
 .mbXS {
-  margin-bottom: 8px;
+  margin-bottom: var(--sizeXS);
 }
 
+.mrXS {
+  margin-right: var(--sizeXS);
+}
+
+.ptXS {
+  padding-top: var(--sizeXS);
+}
+
+:root {
+  --sizeXS: 8px;
+  --sizeS: 16px;
+}

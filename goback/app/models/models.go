@@ -1,7 +1,6 @@
 package models
 
 import (
-	"net/http"
 	"time"
 )
 
@@ -25,10 +24,6 @@ type ChatMessage struct {
 	CreatedAt time.Time `json:"created_at" db:"created_at"`
 }
 
-func (cm *ChatMessage) Bind(r *http.Request) error {
-	return nil
-}
-
 type Room struct {
 	ID        int       `json:"id" db:"id"`
 	Name      string    `json:"name" db:"name"`
@@ -38,9 +33,10 @@ type Room struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
-type Pool struct {
+type Quiz struct {
 	ID        int       `json:"id" db:"id"`
 	RoomID    string    `json:"room_id" db:"room_id"`
+	Name      string    `json:"name" db:"name"`
 	Author    string    `json:"author" db:"author"`
 	Content   string    `json:"content" db:"content"`
 	Variants  Variants  `json:"variants" db:"variants"`

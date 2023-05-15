@@ -16,7 +16,9 @@ export class WebsocketService {
   }
 
   conn(roomID: string) : WebSocketSubject<any> {
-    this.subject = webSocket(`ws://localhost:${environment.port}/api/rooms/${roomID}/ws`);
+    const path = `ws://localhost:${environment.port}/api/rooms/${roomID}/ws`
+    console.log("path:", path)
+    this.subject = webSocket(path);
 
     return this.subject
   }

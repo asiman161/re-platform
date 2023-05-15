@@ -10,7 +10,7 @@ import (
 var UserColumns = []string{"id", "username", "created_at", "updated_at"}
 var ChatColumns = []string{"id", "room_id", "content", "author", "created_at"}
 var RoomColumns = []string{"id", "name", "author", "is_open", "created_at", "updated_at"}
-var PoolColumns = []string{"id", "room_id", "author", "content", "variants", "answers", "is_open", "created_at", "updated_at"}
+var QuizColumns = []string{"id", "room_id", "author", "name", "content", "variants", "answers", "is_open", "created_at", "updated_at"}
 
 type RdMessage struct {
 	Type string `json:"type"`
@@ -30,27 +30,39 @@ func MakeRdMessage(msgType string, data Marshaller) []byte {
 	return bts
 }
 
+func MakeRdMessageStr(msgType, str string) []byte {
+	bts, _ := json.Marshal(RdMessage{
+		Type: msgType,
+		Data: str,
+	})
+
+	return bts
+}
+
 func (cm *ChatMessage) Marshall() []byte {
 	bts, _ := json.Marshal(cm)
 	return bts
 }
 
-func (cm *Pool) Marshall() []byte {
+func (cm *Quiz) Marshall() []byte {
 	bts, _ := json.Marshal(cm)
 	return bts
 }
 
-// Value is used for storing region into jsonb column
+// Value is used for storing into jsonb column
 func (r Variants) Value() (driver.Value, error) {
-	// glorious sql.Balancer driver crutch
-	bytes, err := json.Marshal(r)
+	v := r
+	if v == nil {
+		v = make(Variants, 0)
+	}
+	bytes, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
 	return string(bytes), nil
 }
 
-// Scan is used for reading Location from jsonb column
+// Scan is used for reading from jsonb column
 func (r *Variants) Scan(v interface{}) error {
 	bytes, ok := v.([]byte)
 	if !ok {
@@ -60,17 +72,20 @@ func (r *Variants) Scan(v interface{}) error {
 	return json.Unmarshal(bytes, &r)
 }
 
-// Value is used for storing region into jsonb column
+// Value is used for storing into jsonb column
 func (r Answers) Value() (driver.Value, error) {
-	// glorious sql.Balancer driver crutch
-	bytes, err := json.Marshal(r)
+	v := r
+	if v == nil {
+		v = make(Answers, 0)
+	}
+	bytes, err := json.Marshal(v)
 	if err != nil {
 		return nil, err
 	}
 	return string(bytes), nil
 }
 
-// Scan is used for reading Location from jsonb column
+// Scan is used for reading from jsonb column
 func (r *Answers) Scan(v interface{}) error {
 	bytes, ok := v.([]byte)
 	if !ok {

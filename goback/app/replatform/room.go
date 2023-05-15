@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/asiman161/re-platform/app/models"
 	"github.com/asiman161/re-platform/app/room"
@@ -94,6 +95,35 @@ func (i *Implementation) GetMessages(w http.ResponseWriter, r *http.Request) {
 	roomID := chi.URLParam(r, "room_ID")
 
 	messages, err := i.store.GetMessages(r.Context(), roomID)
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "can't save message")
+		return
+	}
+
+	render.JSON(w, r, messages)
+}
+
+func (i *Implementation) WriteMessage(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "room_ID")
+
+	req := models.ChatMessage{}
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "can't decode room")
+		return
+	}
+
+	author := extractAuthor(r)
+
+	msg := models.ChatMessage{
+		RoomID:    roomID,
+		Content:   req.Content,
+		Author:    author,
+		CreatedAt: time.Now(),
+	}
+
+	messages, err := i.store.WriteChatMessage(r.Context(), msg)
 	if err != nil {
 		writeError(w, r, http.StatusInternalServerError, "can't save message")
 		return

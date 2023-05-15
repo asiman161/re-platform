@@ -27,10 +27,10 @@ type Storager interface {
 	GetMessages(ctx context.Context, chatID string) ([]models.ChatMessage, error)
 	SubscribeMessages(ctx context.Context, chatID string) (chan models.RdMessage, error)
 
-	CreatePool(ctx context.Context, pool models.Pool) (models.Pool, error)
-	ClosePool(ctx context.Context, id int) error
-	AnswerPool(ctx context.Context, poolID int, answer models.Answer) error
-	GetPools(ctx context.Context, roomID string, onlyOpen bool) ([]models.Pool, error)
+	CreateQuiz(ctx context.Context, quiz models.Quiz) (models.Quiz, error)
+	CloseQuiz(ctx context.Context, id int, author string) error
+	AnswerQuiz(ctx context.Context, quizID int, answer models.Answer) error
+	GetQuizzes(ctx context.Context, roomID string, onlyOpen bool) ([]models.Quiz, error)
 }
 
 type Storage struct {

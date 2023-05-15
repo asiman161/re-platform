@@ -20,7 +20,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   @ViewChild('content') content!: ElementRef;
 
   chatInput = new FormControl('', [Validators.required, Validators.min(1)])
-  messages: ChatMessage[] = []
+  @Input() messages: ChatMessage[] = []
   chatForm = this._formBuilder.group({
     msg: this.chatInput
   });
@@ -35,7 +35,7 @@ export class ChatComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    this.conn()
+
     this.chatService.getMessages(this.roomID).subscribe({
       next: messages => {
         this.messages = messages
@@ -58,36 +58,17 @@ export class ChatComponent implements OnInit, OnDestroy {
     }
   }
 
-  conn() {
-    this.ws = this.websocketService.conn(String(this.roomID))
-
-    this.ws.subscribe({
-      next: v => {
-        switch (v.type) {
-          case 'message':
-            this.messages.push(JSON.parse(v.data))
-            break
-          case 'pool':
-            console.log("got pool: ", JSON.parse(v.data))
-            break
-          default:
-            this.snackBar.open(`unknown websocket message type: ${v.type}`, 'close')
-            break
-        }
-      }
-    })
-  }
 
   sendMsg() {
     if (this.chatForm.valid) {
-      this.websocketService.sendMsg(this.chatForm.get("msg")?.value!)
-      this.chatInput.setValue("")
+      this.chatService.sendMessage(this.roomID, this.chatForm.get("msg")?.value!).subscribe(
+        {
+          next: () => this.chatInput.setValue(""),
+          error: () => this.snackBar.open("can't send message", "Close"),
+        }
+      )
     }
   }
 
-  ngOnDestroy(): void {
-    this.ws.complete()
-  }
-
-
+  ngOnDestroy(): void {}
 }

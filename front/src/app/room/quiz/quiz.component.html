@@ -1,0 +1,6 @@
+<mat-card>
+  <mat-card-content>
+    <button class="labeled mrXS" color="{{quiz.is_open ? undefined : 'warn'}}" mat-flat-button *ngFor="let quiz of quizzes" (click)="openDetail(quiz)">{{quiz.name}}</button>
+  </mat-card-content>
+</mat-card>
+

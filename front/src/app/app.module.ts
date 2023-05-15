@@ -34,6 +34,9 @@ import { ChatComponent } from './room/chat/chat.component';
 import { MatCardModule } from '@angular/material/card';
 import { ChatService } from './services/chat.service';
 import { OnlineComponent } from './room/online/online.component';
+import { QuizComponent } from './room/quiz/quiz.component';
+import { CreateQuizDialogComponent } from './room/quiz/create-quiz-dialog/create-quiz-dialog.component';
+import { ShowQuizDialogComponent } from './room/quiz/show-quiz-dialog/show-quiz-dialog.component';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -46,6 +49,9 @@ import { OnlineComponent } from './room/online/online.component';
     CallInfoDialogComponents,
     ChatComponent,
     OnlineComponent,
+    QuizComponent,
+    CreateQuizDialogComponent,
+    ShowQuizDialogComponent,
   ],
     imports: [
         BrowserModule,

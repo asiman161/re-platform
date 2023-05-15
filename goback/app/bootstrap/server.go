@@ -46,11 +46,12 @@ func registerHandlers(r *chi.Mux, i *replatform.Implementation) {
 				r.HandleFunc("/ws", i.Room)
 				r.Post("/close", i.CloseRoom)
 				r.Get("/chat", i.GetMessages)
-				r.Route("/pools", func(r chi.Router) {
-					r.Post("/", i.CreateRoom)
-					r.Get("/", i.GetPools)
-					r.Post("/{pool_ID}/answer", i.AnswerPool)
-					r.Post("/{pool_ID}/close", i.ClosePool)
+				r.Post("/chat", i.WriteMessage)
+				r.Route("/quizzes", func(r chi.Router) {
+					r.Post("/", i.CreateQuiz)
+					r.Get("/", i.GetQuizzes)
+					r.Post("/{quiz_ID}/answer", i.AnswerQuiz)
+					r.Post("/{quiz_ID}/close", i.CloseQuiz)
 				})
 			})
 		})
