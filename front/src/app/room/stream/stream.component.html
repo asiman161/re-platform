@@ -8,8 +8,8 @@
     </div>
   </div>
   <div class="row p-2">
-    <button mat-raised-button color="primary" class="m-2" [disabled]="isCallStarted$ | async" (click)="showModal(false)">Start Call</button>
-    <button mat-raised-button class="m-2" [disabled]="isCallStarted$ | async" (click)="showModal(true)">Join Call</button>
-    <button mat-raised-button color="warn" class="m-2" [disabled]="!(isCallStarted$ | async)" (click)="endCall()">End Call</button>
+    <button mat-raised-button color="primary" class="m-2" [disabled]="isCallStarted$ | async" (click)="showModal(false)">Запустить стрим</button>
+    <button mat-raised-button class="m-2" [disabled]="isCallStarted$ | async" (click)="showModal(true)">Присоединиться к звонку</button>
+    <button mat-raised-button color="warn" class="m-2" [disabled]="!(isCallStarted$ | async)" (click)="endCall()">Отключиться</button>
   </div>
 </div>

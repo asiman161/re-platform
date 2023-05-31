@@ -39,6 +39,8 @@ import { CreateQuizDialogComponent } from './room/quiz/create-quiz-dialog/create
 import { ShowQuizDialogComponent } from './room/quiz/show-quiz-dialog/show-quiz-dialog.component';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { MatTableModule } from '@angular/material/table';
+import { NavbarComponent } from './navbar/navbar.component';
+import { MatBadgeModule } from '@angular/material/badge';
 
 @NgModule({
   bootstrap: [AppComponent],
@@ -54,28 +56,30 @@ import { MatTableModule } from '@angular/material/table';
     QuizComponent,
     CreateQuizDialogComponent,
     ShowQuizDialogComponent,
+    NavbarComponent,
   ],
-  imports: [
-    BrowserModule,
-    AppRoutingModule,
-    HttpClientModule,
-    FormsModule,
-    BrowserAnimationsModule,
-    MatToolbarModule,
-    MatIconModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    SocialLoginModule,
-    GoogleSigninButtonModule,
-    MatFormFieldModule,
-    ClipboardModule,
-    MatDialogModule,
-    MatInputModule,
-    MatCardModule,
-    ReactiveFormsModule,
-    NgxChartsModule,
-    MatTableModule,
-  ],
+    imports: [
+        BrowserModule,
+        AppRoutingModule,
+        HttpClientModule,
+        FormsModule,
+        BrowserAnimationsModule,
+        MatToolbarModule,
+        MatIconModule,
+        MatButtonModule,
+        MatSnackBarModule,
+        SocialLoginModule,
+        GoogleSigninButtonModule,
+        MatFormFieldModule,
+        ClipboardModule,
+        MatDialogModule,
+        MatInputModule,
+        MatCardModule,
+        ReactiveFormsModule,
+        NgxChartsModule,
+        MatTableModule,
+        MatBadgeModule,
+    ],
   providers: [
     AppService,
     RoomService,

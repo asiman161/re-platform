@@ -10,6 +10,7 @@ import (
 var UserColumns = []string{"id", "username", "created_at", "updated_at"}
 var ChatColumns = []string{"id", "room_id", "content", "author", "created_at"}
 var RoomColumns = []string{"id", "name", "author", "is_open", "created_at", "updated_at"}
+var ActiveRoomUsersColumns = []string{"id", "room_id", "email", "connected", "active", "created_at"}
 var QuizColumns = []string{"id", "room_id", "author", "name", "content", "variants", "answers", "is_open", "created_at", "updated_at"}
 
 type RdMessage struct {

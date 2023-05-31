@@ -33,6 +33,15 @@ type Room struct {
 	UpdatedAt time.Time `json:"updated_at" db:"updated_at"`
 }
 
+type RoomUserActivity struct {
+	ID        int       `json:"id" db:"id"`
+	RoomID    string    `json:"room_id" db:"room_id"`
+	Email     string    `json:"email" db:"email"`
+	Connected bool      `json:"connected" db:"connected"`
+	Active    bool      `json:"active" db:"active"`
+	CreatedAt time.Time `json:"created_at" db:"created_at"`
+}
+
 type Quiz struct {
 	ID        int       `json:"id" db:"id"`
 	RoomID    string    `json:"room_id" db:"room_id"`

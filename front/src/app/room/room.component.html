@@ -1,13 +1,13 @@
 <mat-card class="mbS" *ngIf="room.author === user.email">
   <mat-card-actions align="end">
-    <button mat-raised-button color="primary" class="mrXS" (click)="createQuizDialog()">создать задачу</button>
+    <button mat-raised-button color="primary" class="mrXS" (click)="createQuizDialog()">создать опрос</button>
     <button mat-raised-button color="warn" (click)="closeRoom()">закрыть комнату</button>
   </mat-card-actions>
 </mat-card>
 
 <div class="roomContainer" [ngClass]="{'owner': room.author === user.email}">
-  <app-online [roomID]="this.roomID"></app-online>
-  <app-chat [roomID]="this.roomID" [user]="this.user" [messages]="messages"></app-chat>
+  <app-online [roomID]="roomID" [users]="users"></app-online>
+  <app-chat [roomID]="roomID" [user]="this.user" [messages]="messages"></app-chat>
   <div class="stream">
     <app-stream></app-stream>
   </div>

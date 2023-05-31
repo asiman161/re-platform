@@ -26,6 +26,14 @@ export interface Quiz {
   updated_at?: string
 }
 
+export interface UserActivity {
+  room_id: string
+  email: string
+  connected: boolean
+  active: boolean
+  created_at: string
+}
+
 export interface Variant {
   id: number
   value: string
@@ -47,6 +55,11 @@ export class RoomService {
   public createQuiz(quiz: Partial<Quiz>): Observable<Quiz> {
     const path = `${environment.schema}${environment.host}:${environment.port}/api/rooms/${quiz.room_id}/quizzes`
     return this.http.post(path, quiz) as Observable<Quiz>
+  }
+
+  public changeVisibility(room_id: string, activity: Partial<UserActivity>): Observable<string> {
+    const path = `${environment.schema}${environment.host}:${environment.port}/api/rooms/${room_id}/change-user-visibility`
+    return this.http.post(path, activity) as Observable<string>
   }
 
   public getQuizzes(roomID: string): Observable<Quiz[]> {
@@ -78,5 +91,9 @@ export class RoomService {
 
   public getRoom(id: string): Observable<Room> {
     return this.http.get(`${environment.schema}${environment.host}:${environment.port}/api/rooms/${id}`) as Observable<Room>
+  }
+
+  public getRoomUsers(id: string): Observable<UserActivity[]> {
+    return this.http.get(`${environment.schema}${environment.host}:${environment.port}/api/rooms/${id}/users`) as Observable<UserActivity[]>
   }
 }

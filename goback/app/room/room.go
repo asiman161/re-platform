@@ -10,6 +10,7 @@ import (
 	"github.com/asiman161/re-platform/app/models"
 	"github.com/asiman161/re-platform/storage"
 	"github.com/gorilla/websocket"
+	"github.com/pkg/errors"
 )
 
 type Room struct {
@@ -22,13 +23,30 @@ func New(conn *websocket.Conn, store storage.Storager, roomID string) *Room {
 	return &Room{conn: conn, store: store, roomID: roomID}
 }
 
-func (r *Room) Connect() {
-	defer r.conn.Close()
-
-	ctx, cancel := context.WithCancel(context.Background())
+func (r *Room) Connect(ctx context.Context, author string) error {
+	ctx, cancel := context.WithCancel(ctx)
 	defer cancel()
 
+	defer func() {
+		_ = r.conn.Close()
+	}()
+
 	wg := sync.WaitGroup{}
+
+	r.conn.SetCloseHandler(func(code int, text string) error {
+		cancel()
+		err := r.store.ChangeRoomUserVisibility(context.Background(), models.RoomUserActivity{
+			RoomID:    r.roomID,
+			Email:     author,
+			Connected: false,
+			Active:    false,
+		})
+		if err != nil {
+			return errors.Wrap(err, "can't update user online status")
+		}
+
+		return nil
+	})
 
 	wg.Add(1)
 	go func() {
@@ -96,4 +114,6 @@ func (r *Room) Connect() {
 	}()
 
 	wg.Wait()
+
+	return nil
 }

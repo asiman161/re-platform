@@ -21,7 +21,7 @@
       {{data.quiz.content}}
     </div>
     <div class="mbS" *ngIf="data.quiz.answers.length > 0">
-      <ngx-charts-bar-vertical
+      <ngx-charts-bar-horizontal
         [results]="series"
         [view]="[768,400]"
         [gradient]="gradient"

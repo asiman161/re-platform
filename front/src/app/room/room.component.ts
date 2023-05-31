@@ -1,6 +1,6 @@
-import { Component, ElementRef, OnDestroy, OnInit, ViewChild } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
-import { Quiz, Room, RoomService } from '../services/room.service';
+import { Component, ElementRef, HostListener, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
+import { Quiz, Room, RoomService, UserActivity } from '../services/room.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../services/auth.service';
 import { SocialUser } from '@abacritt/angularx-social-login';
@@ -19,9 +19,14 @@ export class RoomComponent implements OnInit, OnDestroy {
   @ViewChild('localStream') localStream!: ElementRef<HTMLVideoElement>
   @ViewChild('remoteStream') remoteStream!: ElementRef<HTMLVideoElement>
 
+  @HostListener('window:visibilitychange') lostFocus() {
+    this.changeVisibility()
+  }
+
   roomID = ''
   room: Room = <Room>{}
   user: SocialUser = <SocialUser>{}
+  users: UserActivity[] = []
   messages: ChatMessage[] = []
   quizzes: Quiz[] = []
   // @ts-ignore
@@ -29,6 +34,7 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 
   constructor(private route: ActivatedRoute,
+              private router: Router,
               private _roomService: RoomService,
               private _snackBar: MatSnackBar,
               private chatService: ChatService,
@@ -62,7 +68,8 @@ export class RoomComponent implements OnInit, OnDestroy {
     this.getMessages()
     this.getMessages()
     this.getQuizzes()
-    this.conn()
+    this.changeVisibility()
+    await this.conn()
   }
 
   getRoom() {
@@ -90,11 +97,17 @@ export class RoomComponent implements OnInit, OnDestroy {
     })
   }
 
-  conn() {
-    this.ws = this.websocketService.conn(this.roomID)
+  changeVisibility() {
+    this._roomService.changeVisibility(this.roomID,{connected: true, active: !document.hidden}).subscribe({
+      error: err => this._snackBar.open(`Failed to update activity status: ${this.roomID}. ${err}`, "Close")
+    })
+  }
+
+  async conn() {
+    this.ws = this.websocketService.conn(this.roomID, this.user.email)
 
     this.ws.subscribe({
-      next: v => {
+      next: async v => {
         switch (v.type) {
           case 'message':
             // hack to force angular update
@@ -106,6 +119,12 @@ export class RoomComponent implements OnInit, OnDestroy {
           case 'close_quiz':
             this.getQuizzes()
             break
+          case 'close_room':
+            await this.router.navigateByUrl('/')
+            break
+          case 'change_visibility':
+            this.getRoomUsers()
+            break
           default:
             this._snackBar.open(`unknown websocket message type: ${v.type}`, 'close')
             break
@@ -116,6 +135,13 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   ngAfterViewInit(): void {
 
+  }
+
+  getRoomUsers() {
+    this._roomService.getRoomUsers(this.roomID).subscribe({
+      next: value => this.users = value,
+      error: err => this._snackBar.open(`can't get room users ${err}`, 'close')
+    })
   }
 
   createQuizDialog() {

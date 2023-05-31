@@ -22,3 +22,15 @@
   border: 3px solid white;
   border-radius: 4px;
 }
+
+.row {
+  margin-bottom: 16px;
+}
+
+button {
+  margin-right: 8px;
+}
+
+button:last-child {
+  margin-right: 0;
+}

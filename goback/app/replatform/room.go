@@ -79,6 +79,7 @@ func (i *Implementation) GetRoom(w http.ResponseWriter, r *http.Request) {
 
 func (i *Implementation) Room(w http.ResponseWriter, r *http.Request) {
 	roomID := chi.URLParam(r, "room_ID")
+	author := chi.URLParam(r, "email")
 
 	c, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -88,7 +89,52 @@ func (i *Implementation) Room(w http.ResponseWriter, r *http.Request) {
 	}
 
 	newRoom := room.New(c, i.store, roomID)
-	newRoom.Connect()
+	err = newRoom.Connect(r.Context(), author)
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "can't connect to room")
+		return
+	}
+}
+
+func (i *Implementation) GetRoomUsers(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "room_ID")
+
+	users, err := i.store.GetCurrentRoomUsers(r.Context(), roomID)
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "can't get users from room")
+		return
+	}
+
+	render.JSON(w, r, users)
+}
+
+func (i *Implementation) ChangeRoomUserVisibility(w http.ResponseWriter, r *http.Request) {
+	roomID := chi.URLParam(r, "room_ID")
+	author := extractAuthor(r)
+
+	type Req struct {
+		Active    bool `json:"active"`
+		Connected bool `json:"connected"`
+	}
+
+	req := Req{}
+
+	err := json.NewDecoder(r.Body).Decode(&req)
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "can't decode activity")
+		return
+	}
+
+	err = i.store.ChangeRoomUserVisibility(r.Context(), models.RoomUserActivity{
+		RoomID:    roomID,
+		Email:     author,
+		Connected: true,
+		Active:    req.Active,
+	})
+	if err != nil {
+		writeError(w, r, http.StatusInternalServerError, "can't update user activity")
+		return
+	}
 }
 
 func (i *Implementation) GetMessages(w http.ResponseWriter, r *http.Request) {

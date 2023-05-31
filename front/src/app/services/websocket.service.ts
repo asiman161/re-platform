@@ -15,9 +15,8 @@ export class WebsocketService {
   constructor(private authService: AuthService) {
   }
 
-  conn(roomID: string) : WebSocketSubject<any> {
-    const path = `ws://localhost:${environment.port}/api/rooms/${roomID}/ws`
-    console.log("path:", path)
+  conn(roomID: string, email: string) : WebSocketSubject<any> {
+    const path = `ws://localhost:${environment.port}/api/rooms/${roomID}/ws/${email}`
     this.subject = webSocket(path);
 
     return this.subject

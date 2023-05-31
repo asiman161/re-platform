@@ -20,6 +20,8 @@ type Storager interface {
 	GetRoom(ctx context.Context, roomID string) (models.Room, error)
 	CreateRoom(ctx context.Context, name, author string) (models.Room, error)
 	CloseRoom(ctx context.Context, roomID, author string) error
+	ChangeRoomUserVisibility(ctx context.Context, activity models.RoomUserActivity) error
+	GetCurrentRoomUsers(ctx context.Context, roomID string) ([]models.RoomUserActivity, error)
 
 	GetUsers(ctx context.Context) ([]models.User, error)
 
@@ -36,6 +38,31 @@ type Storager interface {
 type Storage struct {
 	db *sqlx.DB
 	rd *redis.Client
+}
+
+func (s Storage) ChangeRoomUserVisibility(ctx context.Context, activity models.RoomUserActivity) error {
+	q, args, _ := sq.Insert(activeRoomUsersTable).Columns(models.ActiveRoomUsersColumns[1:]...).
+		Values(activity.RoomID, activity.Email, activity.Connected, activity.Active, time.Now()).
+		PlaceholderFormat(sq.Dollar).ToSql()
+	_, err := s.db.ExecContext(ctx, q, args...)
+	if err != nil {
+		return errors.Wrap(err, "can't create user activity")
+	}
+
+	bts := models.MakeRdMessageStr("change_visibility", "room_id")
+	_, err = s.rd.Publish(ctx, redisRoomID(activity.RoomID), bts).Result()
+	return err
+}
+
+func (s Storage) GetCurrentRoomUsers(ctx context.Context, roomID string) ([]models.RoomUserActivity, error) {
+	users := make([]models.RoomUserActivity, 0)
+
+	err := s.db.SelectContext(ctx, &users, sqlGetRoomUsers, roomID)
+	if err != nil {
+		return nil, errors.Wrap(err, "can't get users for provided room")
+	}
+
+	return users, nil
 }
 
 func (s Storage) GetRoom(ctx context.Context, roomID string) (models.Room, error) {
@@ -95,8 +122,8 @@ func (s Storage) CloseRoom(ctx context.Context, roomID, author string) error {
 		return sql.ErrNoRows
 	}
 
-	//bts := models.MakeRdMessage("close_room", "room_id")
-	_, err = s.rd.Publish(ctx, redisRoomID(roomID), "room_id").Result()
+	bts := models.MakeRdMessageStr("close_room", "room_id")
+	_, err = s.rd.Publish(ctx, redisRoomID(roomID), bts).Result()
 
 	return nil
 }
