@@ -35,12 +35,12 @@ export class RoomComponent implements OnInit, OnDestroy {
 
   constructor(private route: ActivatedRoute,
               private router: Router,
-              private _roomService: RoomService,
-              private _snackBar: MatSnackBar,
+              private roomService: RoomService,
+              private snackBar: MatSnackBar,
               private chatService: ChatService,
               private authService: AuthService,
               private websocketService: WebsocketService,
-              public dialog: MatDialog) {
+              private dialog: MatDialog) {
     this.route.params.subscribe(params => {
       if (!!params['id']) {
         this.roomID = params['id']
@@ -52,12 +52,12 @@ export class RoomComponent implements OnInit, OnDestroy {
 
 
   closeRoom(): void {
-    this._roomService.closeRoom(this.roomID).subscribe({
+    this.roomService.closeRoom(this.roomID).subscribe({
       next: () => {
-        this._snackBar.open(`room with id ${this.roomID} closed`, "Close")
+        this.snackBar.open(`room with id ${this.roomID} closed`, "Close")
       },
       error: () => {
-        this._snackBar.open(`Failed to close room ${this.roomID}`, "Close")
+        this.snackBar.open(`Failed to close room ${this.roomID}`, "Close")
       }
     })
   }
@@ -73,33 +73,33 @@ export class RoomComponent implements OnInit, OnDestroy {
   }
 
   getRoom() {
-    this._roomService.getRoom(this.roomID).subscribe({
+    this.roomService.getRoom(this.roomID).subscribe({
       next: room => {
         this.room = room
       },
       error: err => {
-        this._snackBar.open(`can't get room ${err}`, "Close")
+        this.snackBar.open(`can't get room ${err}`, "Close")
       }
     })
   }
 
   getQuizzes() {
-    this._roomService.getQuizzes(this.roomID).subscribe({
+    this.roomService.getQuizzes(this.roomID).subscribe({
       next: quizzes => this.quizzes = quizzes,
-      error: err => this._snackBar.open(`Failed to get quizzes from room: ${this.roomID}. ${err}`, "Close")
+      error: err => this.snackBar.open(`Failed to get quizzes from room: ${this.roomID}. ${err}`, "Close")
     })
   }
 
   getMessages() {
     this.chatService.getMessages(this.roomID).subscribe({
       next: messages => this.messages = messages,
-      error: err => this._snackBar.open(`Failed to get messages from room: ${this.roomID}. ${err}`, "Close")
+      error: err => this.snackBar.open(`Failed to get messages from room: ${this.roomID}. ${err}`, "Close")
     })
   }
 
   changeVisibility() {
-    this._roomService.changeVisibility(this.roomID,{connected: true, active: !document.hidden}).subscribe({
-      error: err => this._snackBar.open(`Failed to update activity status: ${this.roomID}. ${err}`, "Close")
+    this.roomService.changeVisibility(this.roomID, { connected: true, active: !document.hidden }).subscribe({
+      error: err => this.snackBar.open(`Failed to update activity status: ${this.roomID}. ${err}`, "Close")
     })
   }
 
@@ -126,21 +126,17 @@ export class RoomComponent implements OnInit, OnDestroy {
             this.getRoomUsers()
             break
           default:
-            this._snackBar.open(`unknown websocket message type: ${v.type}`, 'close')
+            this.snackBar.open(`unknown websocket message type: ${v.type}`, 'close')
             break
         }
       }
     })
   }
 
-  ngAfterViewInit(): void {
-
-  }
-
   getRoomUsers() {
-    this._roomService.getRoomUsers(this.roomID).subscribe({
+    this.roomService.getRoomUsers(this.roomID).subscribe({
       next: value => this.users = value,
-      error: err => this._snackBar.open(`can't get room users ${err}`, 'close')
+      error: err => this.snackBar.open(`can't get room users ${err}`, 'close')
     })
   }
 
