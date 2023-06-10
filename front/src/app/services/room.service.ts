@@ -53,12 +53,12 @@ export class RoomService {
   }
 
   public createQuiz(quiz: Partial<Quiz>): Observable<Quiz> {
-    const path = `${environment.schema}${environment.host}:${environment.port}/api/rooms/${quiz.room_id}/quizzes`
+    const path = `${makePathPrefix()}/api/rooms/${quiz.room_id}/quizzes`
     return this.http.post(path, quiz) as Observable<Quiz>
   }
 
   public changeVisibility(room_id: string, activity: Partial<UserActivity>): Observable<string> {
-    const path = `${environment.schema}${environment.host}:${environment.port}/api/rooms/${room_id}/change-user-visibility`
+    const path = `${makePathPrefix()}/api/rooms/${room_id}/change-user-visibility`
     return this.http.post(path, activity) as Observable<string>
   }
 
@@ -78,22 +78,22 @@ export class RoomService {
   }
 
   public createRoom(name: string): Observable<Room> {
-    return this.http.post(`${environment.schema}${environment.host}:${environment.port}/api/rooms`, { name }) as Observable<Room>
+    return this.http.post(`${makePathPrefix()}/api/rooms`, { name }) as Observable<Room>
   }
 
   public closeRoom(id: string): Observable<string> {
-    return this.http.post(`${environment.schema}${environment.host}:${environment.port}/api/rooms/${id}/close`, {}, { responseType: 'text' })
+    return this.http.post(`${makePathPrefix()}/api/rooms/${id}/close`, {}, { responseType: 'text' })
   }
 
   public getRooms(): Observable<Room[]> {
-    return this.http.get(`${environment.schema}${environment.host}:${environment.port}/api/rooms`) as Observable<Room[]>
+    return this.http.get(`${makePathPrefix()}/api/rooms`) as Observable<Room[]>
   }
 
   public getRoom(id: string): Observable<Room> {
-    return this.http.get(`${environment.schema}${environment.host}:${environment.port}/api/rooms/${id}`) as Observable<Room>
+    return this.http.get(`${makePathPrefix()}/api/rooms/${id}`) as Observable<Room>
   }
 
   public getRoomUsers(id: string): Observable<UserActivity[]> {
-    return this.http.get(`${environment.schema}${environment.host}:${environment.port}/api/rooms/${id}/users`) as Observable<UserActivity[]>
+    return this.http.get(`${makePathPrefix()}/api/rooms/${id}/users`) as Observable<UserActivity[]>
   }
 }

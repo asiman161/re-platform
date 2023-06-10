@@ -19,10 +19,10 @@ export class ChatService {
   constructor(private http: HttpClient) { }
 
   getMessages(roomID: string): Observable<ChatMessage[]> {
-    return this.http.get(`http://${environment.host}:${environment.port}/api/rooms/${roomID}/chat`) as Observable<ChatMessage[]>
+    return this.http.get(`http://${window.location.hostname}:${environment.port}/api/rooms/${roomID}/chat`) as Observable<ChatMessage[]>
   }
 
   sendMessage(roomID: string, msg: string): Observable<ChatMessage[]> {
-    return this.http.post(`http://${environment.host}:${environment.port}/api/rooms/${roomID}/chat`, { content: msg }) as Observable<ChatMessage[]>
+    return this.http.post(`http://${window.location.hostname}:${environment.port}/api/rooms/${roomID}/chat`, { content: msg }) as Observable<ChatMessage[]>
   }
 }

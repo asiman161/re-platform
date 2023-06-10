@@ -15,6 +15,14 @@ export class AuthService {
     return this.userData
   }
 
+  setUserEmail(email: string) {
+    if (!this.userData) {
+      this.userData = {} as SocialUser
+    }
+    this.userData.email = email
+    this.saveUser(this.userData)
+  }
+
   checkAuthState(): boolean {
     let localUser = localStorage.getItem('user')
     if (!!localUser) {
@@ -26,7 +34,7 @@ export class AuthService {
       next: (socialUser: SocialUser) => {
         if (socialUser) {
           this.userData = socialUser
-          localStorage.setItem('user', JSON.stringify(socialUser))
+          this.saveUser(socialUser)
           flag = true;
         }
       },
@@ -38,6 +46,10 @@ export class AuthService {
       },
     });
     return flag;
+  }
+
+  saveUser(u: SocialUser) {
+    localStorage.setItem('user', JSON.stringify(u))
   }
 
   signOut() {

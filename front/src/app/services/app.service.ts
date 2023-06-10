@@ -11,6 +11,6 @@ export class AppService {
   constructor(private http: HttpClient) { }
 
   ping(): Observable<string> {
-    return this.http.get(`http://${environment.host}:${environment.port}/api/ping`, { responseType: 'text' })
+    return this.http.get(`http://${window.location.hostname}:${environment.port}/api/ping`, { responseType: 'text' })
   }
 }

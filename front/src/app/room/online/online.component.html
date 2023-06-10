@@ -7,7 +7,7 @@
   <mat-card *ngFor="let user of filterConnected(users)" [ngClass]="{'left': !user.active}">
     <mat-card-content>
       <span>{{user.email}}</span>
-      <span>{{user.created_at | date:'HH:mm:ss'}}</span>
+      <span *ngIf="!user.active">{{user.created_at | date:'HH:mm:ss'}}</span>
     </mat-card-content>
   </mat-card>
 </div>
